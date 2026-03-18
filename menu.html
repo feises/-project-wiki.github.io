@@ -20,6 +20,112 @@
             overflow: hidden;
         }
 
+        .music-player {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 2000;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .music-player:hover {
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .music-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff69b4;
+            font-size: 20px;
+        }
+
+        .music-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #ff69b4, #ff1493);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 105, 180, 0.4);
+        }
+
+        .music-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(255, 105, 180, 0.6);
+        }
+
+        .music-btn:active {
+            transform: scale(0.95);
+        }
+
+        .music-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .music-title {
+            font-size: 12px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: 500;
+        }
+
+        .music-status {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .music-waves {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 20px;
+        }
+
+        .wave {
+            width: 3px;
+            background: linear-gradient(to top, #ff69b4, #ff1493);
+            border-radius: 2px;
+            animation: wave 0.8s ease-in-out infinite;
+        }
+
+        .wave:nth-child(1) { height: 8px; animation-delay: 0s; }
+        .wave:nth-child(2) { height: 14px; animation-delay: 0.1s; }
+        .wave:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+        .wave:nth-child(4) { height: 16px; animation-delay: 0.3s; }
+        .wave:nth-child(5) { height: 12px; animation-delay: 0.4s; }
+
+        @keyframes wave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.5); }
+        }
+
+        .music-waves.paused .wave {
+            animation-play-state: paused;
+        }
+
         .preview-container {
             position: fixed;
             top: 5%;
@@ -107,6 +213,24 @@
     </style>
 </head>
 <body>
+    <div class="music-player" id="musicPlayer">
+        <div class="music-icon">🎵</div>
+        <button class="music-btn" id="playPauseBtn">▶</button>
+        <div class="music-info">
+            <div class="music-title">东方Project BGM</div>
+            <div class="music-status" id="musicStatus">准备播放</div>
+        </div>
+        <div class="music-waves paused" id="musicWaves">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
+    </div>
+
+    <audio id="bgMusic" src="./music0.mp3" loop></audio>
+
     <div class="preview-container" id="preview">
         <img id="preview-img" src="" alt="">
         <div class="name" id="preview-name"></div>
@@ -118,11 +242,80 @@
     </div>
 
     <script>
+        const bgMusic = document.getElementById('bgMusic');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const musicStatus = document.getElementById('musicStatus');
+        const musicWaves = document.getElementById('musicWaves');
+
+        function initMusicPlayer() {
+            const savedTime = localStorage.getItem('bgMusicTime');
+            const wasPlaying = localStorage.getItem('bgMusicPlaying') === 'true';
+
+            if (savedTime) {
+                bgMusic.currentTime = parseFloat(savedTime);
+            }
+
+            if (wasPlaying) {
+                bgMusic.play().then(() => {
+                    updateMusicStatus(true);
+                }).catch(err => {
+                    console.log('Auto-play prevented:', err);
+                    updateMusicStatus(false);
+                });
+            }
+        }
+
+        function togglePlay() {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                updateMusicStatus(true);
+            } else {
+                bgMusic.pause();
+                updateMusicStatus(false);
+            }
+        }
+
+        function updateMusicStatus(isPlaying) {
+            if (isPlaying) {
+                playPauseBtn.textContent = '⏸';
+                musicStatus.textContent = '正在播放';
+                musicWaves.classList.remove('paused');
+                localStorage.setItem('bgMusicPlaying', 'true');
+            } else {
+                playPauseBtn.textContent = '▶';
+                musicStatus.textContent = '已暂停';
+                musicWaves.classList.add('paused');
+                localStorage.setItem('bgMusicPlaying', 'false');
+            }
+        }
+
+        function saveMusicTime() {
+            localStorage.setItem('bgMusicTime', bgMusic.currentTime);
+        }
+
+        playPauseBtn.addEventListener('click', togglePlay);
+
+        bgMusic.addEventListener('timeupdate', saveMusicTime);
+
+        document.addEventListener('click', function initOnInteraction() {
+            if (bgMusic.paused && localStorage.getItem('bgMusicPlaying') !== 'false') {
+                bgMusic.play().then(() => {
+                    updateMusicStatus(true);
+                }).catch(err => {
+                    console.log('Play failed:', err);
+                });
+            }
+            document.removeEventListener('click', initOnInteraction);
+        }, { once: true });
+
+        initMusicPlayer();
+
         const characters = [
             { href: './SMWW/index.html', img: './SMWW/lihui0.jpg', alt: '🙛射命丸文🙙' },
-            { href: './BLLM/index.html', img: './BLLM/lihui.jpeg', alt: '🙛灵梦🙙' },
-            { href: './HPYM/index.html', img: './HPYM/lihui.jpeg', alt: '🙛妖梦🙙' },
-            { href: './HKTY/index.html', img: './HKTY/lihui.jpeg', alt: '🙛赫卡提亚🙙' }
+            { href: './BLLM/index.html', img: './BLLM/lihui.jpeg', alt: '🙛博丽灵梦🙙' },
+            { href: './HPYM/index.html', img: './HPYM/lihui.jpeg', alt: '🙛魂魄妖梦🙙' },
+            { href: './HKTY/index.html', img: './HKTY/lihui.jpeg', alt: '🙛赫卡提亚🙙' },
+            { href: './SLXY/index.html', img: './SLYXY/lihui.jpeg', alt: '🙛十六夜咲夜🙙' }
         ];
 
         let targetIndex = 0;
