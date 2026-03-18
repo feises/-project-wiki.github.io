@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>东方project 角色wiki</title>
     <style>
-        /* 页面整体样式 */
         body {
             font-family: 'Microsoft YaHei', Arial, sans-serif;
-            line-height: 1.6;
-            padding: 20px;
+            padding: 0;
             background-image: url(./background.jpg);
             backdrop-filter: blur(10px);
             background-size: cover;
@@ -18,77 +16,228 @@
             margin: 0;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            justify-content: flex-end;
+            overflow: hidden;
         }
 
-        /* h1标题样式 */
-        h1 {
-            color: #bebebe;
+        .preview-container {
+            position: fixed;
+            top: 5%;
+            left: 50%;
+            transform: translateX(-50%);
             text-align: center;
-            font-size: 64px;
-            font-family: '宋体', sans-serif;
-            margin-bottom: 50px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
 
-        /* 列表样式 */
-        ul {
-            list-style: none;
-            padding: 0;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
+        .preview-container.show {
+            opacity: 1;
         }
 
-        /* 列表项样式 */
-        li {
-            margin: 0 0 0 -100px;
-            transform: rotate(-10deg);
-            transition: all 0.5s ease;
-            z-index: 1;
-        }
-
-        /* 列表项层级 */
-        li:nth-child(1) { z-index: 4; }
-        li:nth-child(2) { z-index: 3; }
-        li:nth-child(3) { z-index: 2; }
-        li:nth-child(4) { z-index: 1; }
-
-        /* 链接样式 */
-        a {
-            display: block;
-            transition: all 0.3s ease;
-        }
-
-        /* 图片样式 */
-        img {
-            width: 300px;
-            height: 400px;
-            border-radius: 50px;
+        .preview-container img {
+            width: 200px;
+            height: 280px;
+            border-radius: 30px;
             box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            object-fit: cover;
+            cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        /* 列表项悬停效果 */
-        li:hover {
-            transform: rotate(0deg) translateX(100px);
-        }
-
-        /* 链接悬停效果 */
-        a:hover img {
+        .preview-container img:hover {
             transform: scale(1.05);
             box-shadow: 0 12px 24px rgba(0,0,0,0.6);
+        }
+
+        .preview-container .name {
+            color: #5b5b5b;
+            font-size: 32px;
+            font-family: '宋体', sans-serif;
+            margin-top: 15px;
+        }
+
+        .carousel-container {
+            position: fixed;
+            bottom: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .carousel {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transform-style: preserve-3d;
+        }
+
+        .carousel-item {
+            position: absolute;
+            transition: all 0.5s ease;
+        }
+
+        .carousel-item img {
+            width: 200px;
+            height: 280px;
+            border-radius: 30px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            object-fit: cover;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .carousel-item.center img {
+            width: 280px;
+            height: 380px;
+            box-shadow: 0 16px 32px rgba(0,0,0,0.6);
+        }
+
+        .carousel-item:hover img {
+            transform: translateY(-30px);
+            box-shadow: 0 16px 32px rgba(0,0,0,0.8);
         }
     </style>
 </head>
 <body>
-    <h1>东方project 角色wiki</h1>
-    <ul>
-        <li><a href="./SMWW/index.html"><img src="./SMWW/lihui0.jpg" alt="射命丸文"></a></li>
-        <li><a href="./BLLM/index.html"><img src="./BLLM/lihui.jpeg" alt="灵梦"></a></li>
-        <li><a href="./HPYM/index.html"><img src="./HPYM/lihui.jpeg" alt="妖梦"></a></li>
-        <li><a href="./HKTY/index.html"><img src="./HKTY/lihui.jpeg" alt="赫卡提亚"></a></li>
-    </ul>
+    <div class="preview-container" id="preview">
+        <img id="preview-img" src="" alt="">
+        <div class="name" id="preview-name"></div>
+    </div>
+
+    <div class="carousel-container">
+        <div class="carousel" id="carousel">
+        </div>
+    </div>
+
+    <script>
+        const characters = [
+            { href: './SMWW/index.html', img: './SMWW/lihui0.jpg', alt: '🙛射命丸文🙙' },
+            { href: './BLLM/index.html', img: './BLLM/lihui.jpeg', alt: '🙛灵梦🙙' },
+            { href: './HPYM/index.html', img: './HPYM/lihui.jpeg', alt: '🙛妖梦🙙' },
+            { href: './HKTY/index.html', img: './HKTY/lihui.jpeg', alt: '🙛赫卡提亚🙙' }
+        ];
+
+        let targetIndex = 0;
+        const radius = 350;
+        const totalItems = characters.length;
+        let wheelTimeout = null;
+
+        function initCarousel() {
+            const carousel = document.getElementById('carousel');
+            carousel.innerHTML = '';
+
+            characters.forEach((char, index) => {
+                const item = document.createElement('div');
+                item.className = 'carousel-item';
+                item.dataset.index = index;
+                item.innerHTML = `<img src="${char.img}" alt="${char.alt}">`;
+                carousel.appendChild(item);
+            });
+
+            updateCarousel(false);
+            updatePreview();
+        }
+
+        function updateCarousel(animate = true) {
+            const items = document.querySelectorAll('.carousel-item');
+            const angleStep = 180 / (totalItems + 1);
+
+            items.forEach((item, index) => {
+                let angle = (index - targetIndex) * angleStep;
+                let adjustedAngle = angle - 90;
+
+                const radian = (adjustedAngle * Math.PI) / 180;
+                const x = Math.cos(radian) * radius;
+                const y = Math.sin(radian) * radius * 0.3;
+
+                const distanceFromCenter = Math.abs(index - targetIndex);
+                const scale = 1 - distanceFromCenter * 0.1;
+                const zIndex = totalItems - distanceFromCenter;
+
+                item.style.transition = animate ? 'all 0.5s ease' : 'none';
+                item.style.transform = `translateX(${x}px) translateY(${y}px) rotate(${angle}deg) scale(${Math.max(scale, 0.6)})`;
+                item.style.zIndex = zIndex;
+
+                if (index === targetIndex) {
+                    item.classList.add('center');
+                } else {
+                    item.classList.remove('center');
+                }
+            });
+
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const preview = document.getElementById('preview');
+            const previewImg = document.getElementById('preview-img');
+            const previewName = document.getElementById('preview-name');
+
+            preview.classList.remove('show');
+
+            setTimeout(() => {
+                previewImg.src = characters[targetIndex].img;
+                previewName.textContent = characters[targetIndex].alt;
+                preview.classList.add('show');
+            }, 300);
+        }
+
+        function handleCarouselClick(index) {
+            targetIndex = parseInt(index);
+            updateCarousel(true);
+        }
+
+        function handlePreviewClick(index) {
+            window.location.href = characters[index].href;
+        }
+
+        document.getElementById('carousel').addEventListener('click', (e) => {
+            const item = e.target.closest('.carousel-item');
+            if (item) {
+                handleCarouselClick(item.dataset.index);
+            }
+        });
+
+        document.getElementById('preview').addEventListener('click', () => {
+            handlePreviewClick(targetIndex);
+        });
+
+        document.addEventListener('wheel', (e) => {
+            if (wheelTimeout) return;
+            
+            wheelTimeout = setTimeout(() => {
+                wheelTimeout = null;
+            }, 400);
+
+            if (e.deltaY > 0) {
+                targetIndex = (targetIndex + 1) % totalItems;
+            } else {
+                targetIndex = (targetIndex - 1 + totalItems) % totalItems;
+            }
+            updateCarousel(true);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                targetIndex = (targetIndex + 1) % totalItems;
+                updateCarousel(true);
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                targetIndex = (targetIndex - 1 + totalItems) % totalItems;
+                updateCarousel(true);
+            } else if (e.key === 'Enter') {
+                handlePreviewClick(targetIndex);
+            }
+        });
+
+        initCarousel();
+    </script>
 </body>
 </html>
