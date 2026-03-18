@@ -160,11 +160,10 @@
 
                 const distanceFromCenter = Math.abs(index - targetIndex);
                 const scale = 1 - distanceFromCenter * 0.1;
-                const zIndex = totalItems - distanceFromCenter;
 
                 item.style.transition = animate ? 'all 0.5s ease' : 'none';
                 item.style.transform = `translateX(${x}px) translateY(${y}px) rotate(${angle}deg) scale(${Math.max(scale, 0.6)})`;
-                item.style.zIndex = zIndex;
+                item.style.zIndex = index;
 
                 if (index === targetIndex) {
                     item.classList.add('center');
