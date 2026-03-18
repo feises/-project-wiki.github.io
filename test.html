@@ -1,0 +1,137 @@
+<!-- 使用"ctrl+/"快捷注释 -->
+<!-- 英文感叹号"!+tab"快速生成框架 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试练习</title>
+    <!-- title是上方标签页显示的文字 -->
+    <style>
+        /* 页面整体样式 */
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif; /* 字体设置 */
+            line-height: 1.6; /* 行高 */
+            max-width: 800px; /* 最大宽度 */
+            margin: 0 auto; /* 居中显示 */
+            padding: 20px; /* 内边距 */
+            background-color: #f5f5f5; /* 背景色 */
+            color: #333; /* 文字颜色 */
+        }
+
+        /* h1标题样式 */
+        h1 {
+            color: #2c3e50; /* 标题颜色 */
+            text-align: center; /* 居中对齐 */
+            padding-bottom: 10px; /* 底部内边距 */
+            border-bottom: 3px solid #3498db; /* 底部边框 */
+        }
+
+        /* 段落样式 */
+        p {
+            background-color: #fff; /* 背景色 */
+            padding: 15px; /* 内边距 */
+            margin: 10px 0; /* 外边距 */
+            border-radius: 5px; /* 圆角 */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* 阴影效果 */
+        }
+
+        /* 图片样式 */
+        img {
+            border-radius: 8px; /* 圆角 */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* 阴影效果 */
+            margin: 10px; /* 外边距 */
+            transition: transform 0.3s; /* 动画过渡效果 */
+        }
+
+        /* 图片悬停效果 */
+        img:hover {
+            transform: scale(1.1); /* 放大1.1倍 */
+        }
+
+        /* 超链接样式 */
+        a {
+            color: #3498db; /* 链接颜色 */
+            text-decoration: none; /* 去掉下划线 */
+            padding: 10px 20px; /* 内边距 */
+            background-color: #fff; /* 背景色 */
+            border-radius: 5px; /* 圆角 */
+            display: inline-block; /* 块级显示 */
+            margin-top: 10px; /* 顶部外边距 */
+            transition: all 0.3s; /* 动画过渡效果 */
+        }
+
+        /* 超链接悬停效果 */
+        a:hover {
+            background-color: #3498db; /* 背景色 */
+            color: #fff; /* 文字颜色 */
+        }
+
+        /* strong加粗样式 */
+        strong {
+            color: #e74c3c; /* 红色 */
+        }
+
+        /* em倾斜样式 */
+        em {
+            color: #9b59b6; /* 紫色 */
+        }
+
+        /* ins下划线样式 */
+        ins {
+            color: #27ae60; /* 绿色 */
+            text-decoration: none; /* 去掉默认下划线 */
+            border-bottom: 2px solid #27ae60; /* 自定义下划线 */
+        }
+
+        /* del删除线样式 */
+        del {
+            color: #95a5a6; /* 灰色 */
+        }
+
+        /* hr分割线样式 */
+        hr {
+            border: none; /* 去掉默认边框 */
+            height: 2px; /* 高度 */
+            background: linear-gradient(to right, #3498db, #9b59b6); /* 渐变色 */
+            margin: 20px 0; /* 外边距 */
+        }
+    </style>
+</head>
+<body>
+    <h1>h1大标题</h1>
+    <!-- h1~h6标题 -->
+    <p>
+        这是第一段
+    </p>
+    <p>
+        这是第二段
+    </p>
+    <br>
+    ↑这里使用br换行
+    <hr>
+    ↑这里使用hr划线
+    <br>
+    <strong>这是strong加粗</strong>
+    <br>
+    <em>这是em倾斜</em>
+    <br>
+    <ins>这是ins下划线</ins>
+    <br>
+    <del>这是del删除线</del>
+    <br>
+    <strong><em>(效果可以叠加使用)</em></strong>
+    <br>
+    <img src="./01.jpg" alt="图片无法显示时显示的文字(如路径错误)" title="鼠标悬停时显示的文字" width="100" height="100">
+    <!-- src显示图片的路径，“”内输入./快捷选择文件，width为宽度、height为高度 -->
+    <!-- 相对路径和绝对路径，“.”表示相对路径 -->
+    <img src="C:\Users\jingx\Pictures\ColoredGlaze02-Dark.jpg" title="鼠标悬停时显示的文字" width="100" height="100">
+    <img src="https://static-cdn-oss.mosoteach.cn/mosoteach2/common/images/logo2.png" title="鼠标悬停时显示的文字" width="100" height="100">
+    <!-- 上面两个是绝对路径，本地和链接的例子 -->
+    <br>
+    <a href="https://www.mosoteach.cn/web/index.php?c=passport&m=index">跳转到云班课</a>
+    <!-- 上面这是一个超链接，用a直接tab出来 -->
+    <!-- 也可以用相对路径或者绝对路径跳转到本地其他html -->
+     
+</body>
+</html>
