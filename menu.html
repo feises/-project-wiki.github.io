@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>东方project 角色wiki</title>
+    <style>
+        /* 页面整体样式 */
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            background-image: url(./background.jpg);
+            backdrop-filter: blur(10px);
+            background-size: cover;
+            background-position: center center;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* h1标题样式 */
+        h1 {
+            color: #bebebe;
+            text-align: center;
+            font-size: 64px;
+            font-family: '宋体', sans-serif;
+            margin-bottom: 50px;
+        }
+
+        /* 列表样式 */
+        ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            gap: -280px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 列表项样式 */
+        li {
+            margin: 0;
+            transform: rotate(-10deg);
+            transition: all 0.5s ease;
+            z-index: 1;
+        }
+
+        /* 列表项层级 */
+        li:nth-child(1) { z-index: 4; }
+        li:nth-child(2) { z-index: 3; }
+        li:nth-child(3) { z-index: 2; }
+        li:nth-child(4) { z-index: 1; }
+
+        /* 链接样式 */
+        a {
+            display: block;
+            transition: all 0.3s ease;
+        }
+
+        /* 图片样式 */
+        img {
+            width: 300px;
+            height: 400px;
+            border-radius: 50px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+        }
+
+        /* 列表项悬停效果 */
+        li:hover {
+            transform: rotate(-10deg) translateX(50px);
+            z-index: 10;
+        }
+
+        /* 链接悬停效果 */
+        a:hover img {
+            transform: scale(1.05);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.6);
+        }
+    </style>
+</head>
+<body>
+    <h1>东方project 角色wiki</h1>
+    <ul>
+        <li><a href="./SMWW/index.html"><img src="./SMWW/lihui0.jpg" alt="射命丸文"></a></li>
+        <li><a href="./BLLM/index.html"><img src="./BLLM/lihui.jpeg" alt="灵梦"></a></li>
+        <li><a href="./HPYM/index.html"><img src="./HPYM/lihui.jpeg" alt="妖梦"></a></li>
+        <li><a href="./HKTY/index.html"><img src="./HKTY/lihui.jpeg" alt="妖梦"></a></li>
+    </ul>
+</body>
+</html>
