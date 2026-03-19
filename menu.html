@@ -149,11 +149,15 @@
             object-fit: cover;
             cursor: pointer;
             transition: all 0.3s ease;
+            border: 3px solid transparent;
+            background: linear-gradient(135deg, #ff1493, #4169e1, #9370db) padding-box, linear-gradient(135deg, #ff1493, #4169e1, #9370db) border-box;
         }
 
         .preview-container img:hover {
             transform: scale(1.05);
             box-shadow: 0 12px 24px rgba(0,0,0,0.6);
+            border: 4px solid transparent;
+            background: linear-gradient(135deg, #ff1493, #4169e1, #9370db) padding-box, linear-gradient(135deg, #ff1493, #4169e1, #9370db) border-box;
         }
 
         .preview-container .name {
@@ -173,6 +177,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            z-index: 10;
         }
 
         .carousel {
@@ -198,21 +203,38 @@
             object-fit: cover;
             transition: all 0.3s ease;
             cursor: pointer;
+            border: 3px solid transparent;
+            background: linear-gradient(135deg, #ff1493, #4169e1, #9370db) padding-box, linear-gradient(135deg, #ff1493, #4169e1, #9370db) border-box;
         }
 
         .carousel-item.center img {
             width: 280px;
             height: 380px;
             box-shadow: 0 16px 32px rgba(0,0,0,0.6);
+            border: 4px solid transparent;
+            background: linear-gradient(135deg, #ff1493, #4169e1, #9370db) padding-box, linear-gradient(135deg, #ff1493, #4169e1, #9370db) border-box;
         }
 
         .carousel-item:hover img {
             transform: translateY(-30px);
             box-shadow: 0 16px 32px rgba(0,0,0,0.8);
+            border: 4px solid transparent;
+            background: linear-gradient(135deg, #ff1493, #4169e1, #9370db) padding-box, linear-gradient(135deg, #ff1493, #4169e1, #9370db) border-box;
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
         }
     </style>
 </head>
 <body>
+    <canvas id="particle-canvas"></canvas>
     <div class="music-player" id="musicPlayer">
         <div class="music-icon">🎵</div>
         <button class="music-btn" id="playPauseBtn">▶</button>
@@ -314,11 +336,13 @@
             { href: './SMWW/index.html', img: './SMWW/lihui0.jpg', alt: '🙛射命丸文🙙' },
             { href: './BLLM/index.html', img: './BLLM/lihui.jpeg', alt: '🙛博丽灵梦🙙' },
             { href: './HPYM/index.html', img: './HPYM/lihui.jpeg', alt: '🙛魂魄妖梦🙙' },
-            { href: './HKTY/index.html', img: './HKTY/lihui.jpeg', alt: '🙛赫卡提亚🙙' },
-            { href: './SLXY/index.html', img: './SLYXY/lihui.jpeg', alt: '🙛十六夜咲夜🙙' }
+            { href: './HKTY/index.html', img: './HKTY/lihui.jpeg', alt: '​🙛赫卡提亚🙙​' },
+            { href: './SLYXY/index.html', img: './SLYXY/lihui.jpeg', alt: '🙛​十六夜咲夜🙙' },
+            { href: './WYMLS/index.html', img: './WYMLS/lihui.jpeg', alt: '​🙛雾雨魔理沙​🙙' },
+            { href: './LMLY/index.html', img: './LMLY/lihui.jpeg', alt: '​🙛蕾米莉亚​🙙' }
         ];
 
-        let targetIndex = 0;
+        let targetIndex = Math.floor(characters.length / 2);
         const radius = 350;
         const totalItems = characters.length;
         let wheelTimeout = null;
@@ -430,6 +454,142 @@
         });
 
         initCarousel();
+
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const maxParticles = 100;
+        const connectionDistance = 150;
+        const mouseDistance = 200;
+
+        let mouse = {
+            x: null,
+            y: null
+        };
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2 + 1;
+                this.color = `rgba(${Math.random() * 100 + 155}, ${Math.random() * 100 + 155}, ${Math.random() * 100 + 155}, 0.8)`;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) {
+                    this.vx *= -1;
+                }
+                if (this.y < 0 || this.y > canvas.height) {
+                    this.vy *= -1;
+                }
+
+                if (mouse.x !== null && mouse.y !== null) {
+                    const dx = mouse.x - this.x;
+                    const dy = mouse.y - this.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < mouseDistance) {
+                        const force = (mouseDistance - distance) / mouseDistance;
+                        this.vx += (dx / distance) * force * 0.5;
+                        this.vy += (dy / distance) * force * 0.5;
+                    }
+                }
+
+                const speed = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+                if (speed > 1.5) {
+                    this.vx = (this.vx / speed) * 1.5;
+                    this.vy = (this.vy / speed) * 1.5;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < maxParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < connectionDistance) {
+                        const opacity = 1 - (distance / connectionDistance);
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(255, 105, 180, ${opacity * 0.5})`;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            if (mouse.x !== null && mouse.y !== null) {
+                for (let i = 0; i < particles.length; i++) {
+                    const dx = mouse.x - particles[i].x;
+                    const dy = mouse.y - particles[i].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < mouseDistance) {
+                        const opacity = 1 - (distance / mouseDistance);
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(65, 105, 225, ${opacity * 0.8})`;
+                        ctx.lineWidth = 1.5;
+                        ctx.moveTo(mouse.x, mouse.y);
+                        ctx.lineTo(particles[i].x, particles[i].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            connectParticles();
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+        window.addEventListener('mouseout', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        resizeCanvas();
+        initParticles();
+        animate();
     </script>
 </body>
 </html>
